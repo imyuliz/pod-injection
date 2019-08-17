@@ -1,0 +1,23 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: mutating-webhook-cfg
+  labels:
+    app: yulibaozi-webhook
+webhooks:
+  - name: sidecar.yulibaozi.com
+    clientConfig:
+      service:
+        name: yulibaozi-webhook-svc
+        namespace: default
+        path: "/mutate"
+      caBundle: ${CA_BUNDLE}
+    rules:
+      - operations: [ "CREATE" ]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["*"]
+    # namespaceSelector:
+    #   matchLabels:
+    #     yulibaozi-webhook: enabled
+

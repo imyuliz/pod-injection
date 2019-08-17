@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yulibaozi-webhook-deployment
+  labels:
+    app: yulibaozi-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yulibaozi-webhook
+  template:
+    metadata:
+      labels:
+        app: yulibaozi-webhook
+    spec:
+      serviceAccountName: sidecaruser
+      containers:
+        - name: yulibaozi-webhook
+          image: yulibaozi/sidecar-injection:201908171716
+          ports:
+          - containerPort: 443
+            name: port1
+            protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /etc/webhook/certs/
+              readOnly: true
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: yulibaozi-webhook-certs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yulibaozi-webhook-svc
+  labels:
+    app: yulibaozi-webhook
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+  selector:
+    app: yulibaozi-webhook

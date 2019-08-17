@@ -1,0 +1,41 @@
+variables:
+  IMAGE: "sidecar-injection"
+  DATA: "{\"property\": {\"baseimage\": [\"centos\"]}}"
+
+stages:
+- test
+- build
+- deploy
+
+go_test:
+  stage: test
+  script:
+    - export GOPATH=$PWD
+
+go_webhook_build:
+  stage: build
+  environment:
+    name: build
+  script:
+    - export GOPATH=$PWD
+    - cd src/injection
+    - GOARCH=amd64 CGO_ENABLED=0 GOOS=linux go build  --ldflags "-extldflags -static"  -o injection main.go
+    - cd ../../
+    - mkdir -p bin
+    - cp src/injection/injection bin/injection
+    - cp Dockerfile bin/Dockerfile
+    - echo `git log | head -1 | cut -d ' ' -f2` > bin/manifest
+    - mkdir -p go
+    - mv bin/ ./go/bin
+    - TAG=`date +%Y%m%d%H%M`
+    - docker build -t $IMAGE:$TAG .
+    - docker tag $IMAGE:$TAG yulibaozi/$IMAGE:$TAG
+    - docker push yulibaozi/$IMAGE:$TAG
+    - docker rmi yulibaozi/$IMAGE:$TAG
+    - docker rmi $IMAGE:$TAG
+
+    
+go_webhook_deploy:
+  stage: deploy
+  script:
+    - echo "deploy finished"

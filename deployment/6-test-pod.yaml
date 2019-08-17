@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    app: podtest 
+  name: podtest
+  namespace: default
+spec:
+  containers:
+  - image: alpine:latest
+    name: alpine
