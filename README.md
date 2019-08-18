@@ -3,7 +3,9 @@
 ####  项目介绍
 
 1. 如果发布的pod的Annotations中包含了 `yulibaozi/injected:true`和`yulibaozi/noinjected:true`中任意一个注解, 此Pod不会被注入sidecar
+    
     `yulibaozi/injected:true`  : 表明这个Pod已经被注入过sidecar
+    
     `yulibaozi/noinjected:true`:  表明这个pod不需要注入sidecar
 
 2. 此项目在 kubernetes `v1.11.3` 测试通过, 运行正常
