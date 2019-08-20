@@ -1,5 +1,4 @@
 .vscode
 .idea
 .DS_Store
-pkg
 ./deployment/2-mutatingwebhook-ca-bundle.yaml
